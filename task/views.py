@@ -26,14 +26,14 @@ class TaskAPIView(generics.ListCreateAPIView,\
     '''
     CRUD for Task
     '''
-    serializer_class=TagSer
+    serializer_class=TaskSer
 
     def put(self, request):
         return self.partial_update(request)
     
     def get_queryset(self):
-        project = self.kwargs.get('project',None)
-        if project is not None:
-            return Task.objects.filter(project__id=project,user__in=[self.request.user,None])
+        project = str(self.request.GET.get('project',''))
+        if project is not None and project.isnumeric():
+            return Task.objects.filter(project__id=int(project),user__in=[self.request.user,None])
         
-        return Task.objects.all()
+        return Task.objects.filter(user=self.request.user)

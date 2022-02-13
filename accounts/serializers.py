@@ -20,7 +20,10 @@ class LoginSerializer(serializers.ModelSerializer):
         fields=['id','email','password']
     
     def create(self,instance):
-        user=authenticate(username=User.objects.get(email=instance.get("email",None))\
+        user=User.objects.filter(email=instance.get("email"))
+        if not user.exists():raise serializers.ValidationError({'login':
+                ErrorDetail(code='invalid_login',string='Password or Email Incorrect')})
+        user=authenticate(username=user[0].username\
             ,password=instance.get("password",None))
         if user is None:
             raise serializers.ValidationError({'login':
