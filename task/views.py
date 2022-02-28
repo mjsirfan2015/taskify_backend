@@ -27,13 +27,13 @@ class TaskAPIView(generics.ListCreateAPIView,\
     CRUD for Task
     '''
     serializer_class=TaskSer
-
-    def put(self, request):
-        return self.partial_update(request)
+    lookup_field = 'pk'
+    def put(self, request,pk):
+        return self.partial_update(request,pk)
     
     def get_queryset(self):
         project = str(self.request.GET.get('project',''))
         if project is not None and project.isnumeric():
-            return Task.objects.filter(project__id=int(project),user__in=[self.request.user,None])
+            return Task.objects.filter(project__id=int(project),user__in=[self.request.user,None],done=False)
         
-        return Task.objects.filter(user=self.request.user)
+        return Task.objects.filter(user=self.request.user,done=False)
