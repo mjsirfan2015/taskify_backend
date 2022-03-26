@@ -34,6 +34,7 @@ class TaskAPIView(generics.ListCreateAPIView,\
     def get_queryset(self):
         project = str(self.request.GET.get('project',''))
         if project is not None and project.isnumeric():
-            return Task.objects.filter(project__id=int(project),user__in=[self.request.user,None],done=False)
+            return Task.objects.filter(project__id=int(project),user__in=[self.request.user,None],done=False).order_by('-id')
+
         
-        return Task.objects.filter(user=self.request.user,done=False)
+        return Task.objects.filter(user=self.request.user,done=False).order_by('-id')
